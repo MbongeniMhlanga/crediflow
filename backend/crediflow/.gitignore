@@ -1,6 +1,7 @@
 HELP.md
 target/
 application.properties
+application.properties.example
 application.yml
 application.yaml
 .mvn/wrapper/maven-wrapper.jar
