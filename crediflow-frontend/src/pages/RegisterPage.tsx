@@ -3,11 +3,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRegister } from "../hooks/useAuthApi";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck } from "lucide-react";
 
 const registerSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -38,37 +37,73 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
-            💳 CrediFlow
-          </CardTitle>
-          <CardDescription className="text-center">
+    <div className="min-h-screen flex">
+      {/* Left branding panel */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gray-900 flex-col justify-between p-12 overflow-hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
+        />
+
+        <div className="relative flex items-center gap-2 text-white text-xl font-semibold tracking-tight">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm font-bold">
+            C
+          </span>
+          CrediFlow
+        </div>
+
+        <div className="relative">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-blue-300 mb-6">
+            <ShieldCheck className="h-4 w-4" />
+            Bank-grade security, built in
+          </div>
+          <h1 className="text-4xl font-semibold tracking-tight text-white leading-tight">
+            Loans, decided at the speed of trust.
+          </h1>
+          <p className="mt-4 text-gray-400 text-lg leading-relaxed max-w-md">
+            Create an account to apply, track, and manage your loans in one
+            modern platform.
+          </p>
+        </div>
+
+        <div className="relative text-sm text-gray-500">
+          © {new Date().getFullYear()} CrediFlow. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right form panel */}
+      <div className="flex flex-1 items-center justify-center px-6 py-12 sm:px-12">
+        <div className="w-full max-w-sm">
+          <div className="lg:hidden flex items-center gap-2 text-xl font-semibold tracking-tight text-gray-900 mb-10">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm font-bold">
+              C
+            </span>
+            CrediFlow
+          </div>
+
+          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
             Create your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            Get started in less than a minute.
+          </p>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  placeholder="John"
-                  {...register("name")}
-                />
+                <Input id="name" placeholder="John" {...register("name")} />
                 {errors.name && (
                   <p className="text-red-500 text-sm">{errors.name.message}</p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="surname">Surname</Label>
-                <Input
-                  id="surname"
-                  placeholder="Doe"
-                  {...register("surname")}
-                />
+                <Input id="surname" placeholder="Doe" {...register("surname")} />
                 {errors.surname && (
                   <p className="text-red-500 text-sm">{errors.surname.message}</p>
                 )}
@@ -103,18 +138,21 @@ export const RegisterPage = () => {
               className="w-full"
               disabled={registerMutation.isPending}
             >
-              {registerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {registerMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Create Account
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
+
+          <div className="mt-6 text-center text-sm text-gray-500">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 hover:underline">
+            <Link to="/login" className="text-blue-600 font-medium hover:underline">
               Sign in
             </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
