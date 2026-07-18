@@ -67,7 +67,7 @@ export const AdminApplicationsPage = () => {
             <div className="flex justify-between items-start">
               <div>
                 <CardTitle>{app.productName}</CardTitle>
-                <p className="text-sm text-gray-500">User ID: {app.userId}</p>
+                {/* <p className="text-sm text-gray-500">User ID: {app.name}</p> */}
               </div>
               <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(app.status)}`}>
                 {app.status}
@@ -77,7 +77,7 @@ export const AdminApplicationsPage = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p><strong>Amount:</strong> ${app.amountRequested.toLocaleString()}</p>
+                <p><strong>Amount:</strong> R{app.amountRequested.toLocaleString()}</p>
                 <p><strong>Term:</strong> {app.termMonths} months</p>
                 <p><strong>Applied:</strong> {new Date(app.createdAt).toLocaleDateString()}</p>
               </div>
