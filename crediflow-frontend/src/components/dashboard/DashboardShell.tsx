@@ -39,7 +39,7 @@ export const DashboardShell = () => {
                 CrediFlow
               </p>
               <p className="text-sm text-[var(--muted)]">
-                Lending workspace
+                Admin workspace
               </p>
             </div>
           </Link>
