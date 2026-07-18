@@ -1,6 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../lib/axios";
-import type { LoanProductDTO, LoanApplicationRequestDTO, LoanApplicationResponseDTO } from "../types";
+import type {
+  LoanProductDTO,
+  LoanApplicationRequestDTO,
+  LoanApplicationResponseDTO,
+  CreditScoreDTO,
+  CreditDecisionDTO,
+  RepaymentScheduleDTO,
+  PaymentDTO,
+  PenaltyDTO,
+} from "../types";
 
 export const useLoanProducts = () => {
   return useQuery({
@@ -85,3 +94,51 @@ export const useRejectApplication = () => {
     },
   });
 };
+
+export const useCurrentCreditScore = () =>
+  useQuery({
+    queryKey: ["currentCreditScore"],
+    queryFn: async () => {
+      const response = await api.get<CreditScoreDTO>("/credit-scores/me");
+      return response.data;
+    },
+  });
+
+export const useCurrentCreditDecision = () =>
+  useQuery({
+    queryKey: ["currentCreditDecision"],
+    queryFn: async () => {
+      const response = await api.get<CreditDecisionDTO>("/credit-scores/decision");
+      return response.data;
+    },
+  });
+
+export const useRepaymentSchedule = (loanId?: number | null) =>
+  useQuery({
+    queryKey: ["repaymentSchedule", loanId],
+    enabled: !!loanId,
+    queryFn: async () => {
+      const response = await api.get<RepaymentScheduleDTO[]>(`/repayment-schedules/loan/${loanId}`);
+      return response.data;
+    },
+  });
+
+export const usePayments = (loanId?: number | null) =>
+  useQuery({
+    queryKey: ["payments", loanId],
+    enabled: !!loanId,
+    queryFn: async () => {
+      const response = await api.get<PaymentDTO[]>(`/payments/loan/${loanId}`);
+      return response.data;
+    },
+  });
+
+export const usePenalties = (loanId?: number | null) =>
+  useQuery({
+    queryKey: ["penalties", loanId],
+    enabled: !!loanId,
+    queryFn: async () => {
+      const response = await api.get<PenaltyDTO[]>(`/penalties/loan/${loanId}`);
+      return response.data;
+    },
+  });

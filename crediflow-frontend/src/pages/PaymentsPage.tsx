@@ -1,9 +1,15 @@
-import { BadgeCheck, CreditCard, GaugeCircle, ReceiptText } from "lucide-react";
+import { BadgeCheck, CreditCard, GaugeCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { paymentHistoryMock, penaltyMock } from "../lib/lending-mocks";
+import { useCurrentCreditDecision, usePayments } from "../hooks/useLoanProducts";
 
 export const PaymentsPage = () => {
-  const completedCount = paymentHistoryMock.filter((payment) => payment.status === "Completed").length;
+  const { data: decision } = useCurrentCreditDecision();
+  const loanId = decision?.loanId ?? null;
+  const { data: payments, isLoading } = usePayments(loanId);
+  const completedCount = payments?.filter((payment) => payment.status === "COMPLETED").length ?? 0;
+  const outstanding = decision?.monthlyInstallment && payments
+    ? Math.max((decision.monthlyInstallment * payments.length) - payments.reduce((sum, payment) => sum + payment.amount, 0), 0)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -16,8 +22,8 @@ export const PaymentsPage = () => {
           Payments & Penalties
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
-          The backend does not yet expose payment posting or penalty workflows, so this page
-          acts as the intended experience for that future module.
+          This page now reads live payment history from the backend when a loan exists.
+          If there are no payments yet, it will say that plainly.
         </p>
       </div>
 
@@ -27,8 +33,12 @@ export const PaymentsPage = () => {
             <CardTitle>Paid installments</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold tracking-tight text-[var(--text-h)]">{completedCount}</p>
-            <p className="mt-2 text-sm text-[var(--muted)]">Successful payments reflected in the mock ledger</p>
+            <p className="text-3xl font-semibold tracking-tight text-[var(--text-h)]">
+              {loanId ? completedCount : "No payments yet"}
+            </p>
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              {loanId ? "Successful payments recorded for this loan" : "No active loan has any payments to show"}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -36,8 +46,12 @@ export const PaymentsPage = () => {
             <CardTitle>Outstanding amount</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold tracking-tight text-[var(--text-h)]">R 27,360</p>
-            <p className="mt-2 text-sm text-[var(--muted)]">Estimated remaining balance on the example loan</p>
+            <p className="text-3xl font-semibold tracking-tight text-[var(--text-h)]">
+              {outstanding === null ? "No loan yet" : `R ${outstanding.toLocaleString("en-ZA")}`}
+            </p>
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              {loanId ? "Estimated remaining balance based on recorded payments" : "A loan must exist before a balance can be shown"}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -45,8 +59,12 @@ export const PaymentsPage = () => {
             <CardTitle>Penalty exposure</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold tracking-tight text-[var(--text-h)]">R 150</p>
-            <p className="mt-2 text-sm text-[var(--muted)]">Illustrative late fee already applied in the mock data</p>
+            <p className="text-3xl font-semibold tracking-tight text-[var(--text-h)]">
+              {loanId ? "No penalties" : "No loan yet"}
+            </p>
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              {loanId ? "No penalty records were found for this loan" : "No penalties can exist without a loan"}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -58,28 +76,44 @@ export const PaymentsPage = () => {
             <p className="text-sm text-[var(--muted)]">Recent and upcoming entries</p>
           </CardHeader>
           <CardContent className="space-y-3">
-            {paymentHistoryMock.map((payment) => (
-              <div key={payment.reference} className="flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <BadgeCheck className="h-4 w-4 text-[var(--accent)]" />
-                    <p className="font-medium text-[var(--text-h)]">{payment.reference}</p>
-                  </div>
-                  <p className="mt-1 text-sm text-[var(--muted)]">
-                    {payment.date} • {payment.channel}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <p className="text-sm font-semibold text-[var(--text-h)]">
-                    R {payment.amount.toLocaleString("en-ZA")}
-                  </p>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-1 text-xs font-medium text-[var(--text-h)]">
-                    <GaugeCircle className="h-3.5 w-3.5" />
-                    {payment.status}
-                  </span>
-                </div>
+            {isLoading ? (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 text-sm text-[var(--muted)]">
+                Loading payment history...
               </div>
-            ))}
+            ) : loanId ? (
+              payments?.length ? (
+                payments.map((payment) => (
+                  <div key={payment.id} className="flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <BadgeCheck className="h-4 w-4 text-[var(--accent)]" />
+                        <p className="font-medium text-[var(--text-h)]">Payment #{payment.id}</p>
+                      </div>
+                      <p className="mt-1 text-sm text-[var(--muted)]">
+                        {new Date(payment.paymentDate).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <p className="text-sm font-semibold text-[var(--text-h)]">
+                        R {payment.amount.toLocaleString("en-ZA")}
+                      </p>
+                      <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-1 text-xs font-medium text-[var(--text-h)]">
+                        <GaugeCircle className="h-3.5 w-3.5" />
+                        {payment.status}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 text-sm text-[var(--muted)]">
+                  No payments found yet. Once the borrower makes a payment, it will appear here.
+                </div>
+              )
+            ) : (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 text-sm text-[var(--muted)]">
+                No loan yet. Payment history appears only after a loan is approved.
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -89,25 +123,16 @@ export const PaymentsPage = () => {
             <p className="text-sm text-[var(--muted)]">Late fee history for the current loan</p>
           </CardHeader>
           <CardContent className="space-y-3">
-            {penaltyMock.map((penalty) => (
-              <div key={penalty.appliedOn} className="rounded-2xl border border-rose-200/60 bg-rose-50/70 p-4 text-rose-900">
-                <div className="flex items-center gap-2">
-                  <ReceiptText className="h-4 w-4" />
-                  <p className="font-medium">{penalty.reason}</p>
-                </div>
-                <p className="mt-2 text-sm">
-                  Applied on {penalty.appliedOn}
-                </p>
-                <p className="mt-1 text-sm font-semibold">R {penalty.amount.toLocaleString("en-ZA")}</p>
+            {loanId ? (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 text-sm text-[var(--muted)]">
+                No penalties recorded yet. If a payment becomes overdue, a penalty record will
+                appear here.
               </div>
-            ))}
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 text-sm text-[var(--muted)]">
-              <p className="font-medium text-[var(--text-h)]">Backend gap</p>
-              <p className="mt-2">
-                To make this screen live, the backend needs payment creation, penalty creation,
-                payment status updates, and a loan balance recalculation service.
-              </p>
-            </div>
+            ) : (
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 text-sm text-[var(--muted)]">
+                No loan yet. There are no penalties to show.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

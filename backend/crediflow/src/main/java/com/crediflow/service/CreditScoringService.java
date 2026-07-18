@@ -94,6 +94,7 @@ public class CreditScoringService {
         return new CreditDecisionDTO(
                 user.getId(),
                 application.getId(),
+                null,
                 score,
                 riskLevel,
                 eligible,

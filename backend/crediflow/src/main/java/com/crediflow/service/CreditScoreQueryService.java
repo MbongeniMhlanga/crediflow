@@ -14,6 +14,8 @@ import com.crediflow.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+
 @Service
 public class CreditScoreQueryService {
     private final CreditScoreRepository creditScoreRepository;
@@ -52,10 +54,11 @@ public class CreditScoreQueryService {
 
         Loan loan = loanRepository.findByUserId(user.getId())
                 .stream()
-                .reduce((first, second) -> second)
+                .max(Comparator.comparing(Loan::getId))
                 .orElseThrow(() -> new ResourceNotFoundException("No loan found for current user"));
-
-        return creditScoringService.evaluate(user, application, application.getProduct(), loan.getMonthlyPayment());
+        CreditDecisionDTO decision = creditScoringService.evaluate(user, application, application.getProduct(), loan.getMonthlyPayment());
+        decision.setLoanId(loan.getId());
+        return decision;
     }
 
     private User currentUser() {

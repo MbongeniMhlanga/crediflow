@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 public class CreditDecisionDTO {
     private Long userId;
     private Long applicationId;
+    private Long loanId;
     private Integer score;
     private RiskLevel riskLevel;
     private boolean eligible;
