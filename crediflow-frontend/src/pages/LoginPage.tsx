@@ -35,9 +35,8 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left branding panel */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gray-900 flex-col justify-between p-12 overflow-hidden">
+    <div className="min-h-screen flex bg-slate-950">
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col justify-between p-12 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_32%),linear-gradient(160deg,_#020617_0%,_#0f172a_100%)]">
         <div
           aria-hidden
           className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl"
@@ -47,14 +46,14 @@ export const LoginPage = () => {
           className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
         />
 
-        <div className="relative flex items-center gap-2 text-white text-xl font-semibold tracking-tight">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm font-bold">
+        <div className="relative flex items-center gap-2 text-xl font-semibold tracking-tight text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
             C
           </span>
           CrediFlow
         </div>
 
-        <div className="relative">
+        <div className="relative max-w-md">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm font-medium text-blue-300 mb-6">
             <ShieldCheck className="h-4 w-4" />
             Bank-grade security, built in
@@ -62,31 +61,29 @@ export const LoginPage = () => {
           <h1 className="text-4xl font-semibold tracking-tight text-white leading-tight">
             Welcome back to a smarter way to manage lending.
           </h1>
-          <p className="mt-4 text-gray-400 text-lg leading-relaxed max-w-md">
-            Track applications, review decisions, and stay on top of every
-            loan in one place.
+          <p className="mt-4 text-lg leading-relaxed text-slate-300">
+            Track applications, review decisions, and stay on top of every loan in one place.
           </p>
         </div>
 
-        <div className="relative text-sm text-gray-500">
-          © {new Date().getFullYear()} CrediFlow. All rights reserved.
+        <div className="relative text-sm text-slate-400">
+          &copy; {new Date().getFullYear()} CrediFlow. All rights reserved.
         </div>
       </div>
 
-      {/* Right form panel */}
       <div className="flex flex-1 items-center justify-center px-6 py-12 sm:px-12">
         <div className="w-full max-w-sm">
-          <div className="lg:hidden flex items-center gap-2 text-xl font-semibold tracking-tight text-gray-900 mb-10">
+          <div className="lg:hidden flex items-center gap-2 text-xl font-semibold tracking-tight text-white mb-10">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm font-bold">
               C
             </span>
             CrediFlow
           </div>
 
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">
+          <h2 className="text-3xl font-semibold tracking-tight text-white lg:text-slate-900">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-slate-400 lg:text-slate-500">
             Enter your details to access your dashboard.
           </p>
 
@@ -100,7 +97,7 @@ export const LoginPage = () => {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm">{errors.email.message}</p>
+                <p className="text-sm text-red-500">{errors.email.message}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -112,24 +109,20 @@ export const LoginPage = () => {
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm">{errors.password.message}</p>
+                <p className="text-sm text-red-500">{errors.password.message}</p>
               )}
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loginMutation.isPending}
-            >
+            <Button type="submit" className="w-full gap-2" disabled={loginMutation.isPending}>
               {loginMutation.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               )}
               Sign In
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
+          <div className="mt-6 text-center text-sm text-slate-400 lg:text-slate-500">
             Don't have an account?{" "}
-            <Link to="/register" className="text-blue-600 font-medium hover:underline">
+            <Link to="/register" className="font-medium text-blue-600 hover:underline">
               Sign up
             </Link>
           </div>
