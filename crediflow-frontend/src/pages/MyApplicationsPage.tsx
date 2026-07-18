@@ -184,7 +184,7 @@ export const MyApplicationsPage = () => {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl bg-slate-50 p-3">
                   <p className="text-slate-500 text-sm">Amount requested</p>
-                  <p className="mt-1 font-semibold text-slate-900">${app.amountRequested.toLocaleString()}</p>
+                  <p className="mt-1 font-semibold text-slate-900">R{app.amountRequested.toLocaleString()}</p>
                 </div>
                 <div className="rounded-2xl bg-slate-50 p-3">
                   <p className="text-slate-500 text-sm">Term</p>
