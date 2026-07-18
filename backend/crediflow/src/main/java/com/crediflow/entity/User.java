@@ -27,7 +27,13 @@ public class User {
     
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
-    
+
+    @Column(name = "monthly_income", precision = 15, scale = 2)
+    private java.math.BigDecimal monthlyIncome;
+
+    @Column(name = "employment_status")
+    private String employmentStatus;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "USER_ROLES",
