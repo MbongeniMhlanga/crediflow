@@ -12,6 +12,7 @@ import com.crediflow.util.FinancialCalculationUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,8 @@ public class LoanApplicationService {
     private final UserRepository userRepository;
     private final LoanRepository loanRepository;
     private final CreditScoreRepository creditScoreRepository;
+    private final CreditScoringService creditScoringService;
+    private final RepaymentScheduleService repaymentScheduleService;
     private final LoanApplicationMapper loanApplicationMapper;
 
     public LoanApplicationService(
@@ -31,6 +34,8 @@ public class LoanApplicationService {
             UserRepository userRepository,
             LoanRepository loanRepository,
             CreditScoreRepository creditScoreRepository,
+            CreditScoringService creditScoringService,
+            RepaymentScheduleService repaymentScheduleService,
             LoanApplicationMapper loanApplicationMapper
     ) {
         this.loanApplicationRepository = loanApplicationRepository;
@@ -38,6 +43,8 @@ public class LoanApplicationService {
         this.userRepository = userRepository;
         this.loanRepository = loanRepository;
         this.creditScoreRepository = creditScoreRepository;
+        this.creditScoringService = creditScoringService;
+        this.repaymentScheduleService = repaymentScheduleService;
         this.loanApplicationMapper = loanApplicationMapper;
     }
 
@@ -93,30 +100,35 @@ public class LoanApplicationService {
             throw new BadRequestException("Application is not pending");
         }
 
-        // Calculate credit score (simple example)
+        BigDecimal monthlyPayment = FinancialCalculationUtil.calculateEMI(
+                application.getAmountRequested(),
+                application.getProduct().getInterestRate(),
+                application.getTermMonths()
+        );
+        var decision = creditScoringService.evaluate(application.getUser(), application, application.getProduct(), monthlyPayment);
+        if (!decision.isEligible()) {
+            throw new BadRequestException("Application is not eligible: " + decision.getReason());
+        }
+
         CreditScore creditScore = new CreditScore();
         creditScore.setUser(application.getUser());
-        creditScore.setScore(700); // Example score
-        creditScore.setRiskLevel(CreditScore.RiskLevel.LOW);
+        creditScore.setScore(decision.getScore());
+        creditScore.setRiskLevel(decision.getRiskLevel());
         creditScore.setCalculatedAt(java.time.LocalDateTime.now());
         creditScoreRepository.save(creditScore);
 
-        // Create loan
         Loan loan = new Loan();
         loan.setApplication(application);
         loan.setUser(application.getUser());
         loan.setPrincipalAmount(application.getAmountRequested());
         loan.setInterestRate(application.getProduct().getInterestRate());
         loan.setTermMonths(application.getTermMonths());
-        loan.setMonthlyPayment(FinancialCalculationUtil.calculateEMI(
-                application.getAmountRequested(),
-                application.getProduct().getInterestRate(),
-                application.getTermMonths()
-        ));
+        loan.setMonthlyPayment(monthlyPayment);
         loan.setOutstandingBalance(application.getAmountRequested());
         loan.setStatus(Loan.LoanStatus.ACTIVE);
         loan.setStartDate(LocalDate.now());
-        loanRepository.save(loan);
+        Loan savedLoan = loanRepository.save(loan);
+        repaymentScheduleService.generateSchedule(savedLoan);
 
         application.setStatus(ApplicationStatus.APPROVED);
         LoanApplication savedApplication = loanApplicationRepository.save(application);

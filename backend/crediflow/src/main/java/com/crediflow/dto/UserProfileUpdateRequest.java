@@ -1,20 +1,18 @@
 package com.crediflow.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
-    private Long id;
-    private String name;
-    private String surname;
-    private String email;
+public class UserProfileUpdateRequest {
     private BigDecimal monthlyIncome;
+
+    @NotBlank(message = "Employment status is required")
     private String employmentStatus;
-    private Set<RoleDTO> roles;
 }
