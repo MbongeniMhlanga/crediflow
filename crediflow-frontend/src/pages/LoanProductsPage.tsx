@@ -46,18 +46,28 @@ export const LoanProductsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
       );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Loan Products</h2>
+      <div className="flex flex-col gap-4 rounded-3xl border border-white/70 bg-white/75 p-6 shadow-xl shadow-slate-200/40 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
+            Product management
+          </p>
+          <h2 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
+            Loan Products
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Review existing products and add new lending options for your team.
+          </p>
+        </div>
         {isAdmin && (
-          <Button onClick={() => setShowForm(!showForm)}>
+          <Button onClick={() => setShowForm(!showForm)} className="w-fit gap-2">
             <Plus className="h-4 w-4 mr-2" />
             Add Product
           </Button>
@@ -68,6 +78,9 @@ export const LoanProductsPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Create New Loan Product</CardTitle>
+            <p className="text-sm text-slate-500">
+              Set the core terms for the product so the application flow stays clear.
+            </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -117,17 +130,19 @@ export const LoanProductsPage = () => {
                   )}
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button
-                  type="submit" disabled={createProduct.isPending}>
-                  {createProduct.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <div className="flex flex-wrap gap-3">
+                <Button type="submit" disabled={createProduct.isPending} className="gap-2">
+                  {createProduct.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                   Create
                 </Button>
                 <Button
-                  type="button" variant="secondary" onClick={() => {
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
                   setShowForm(false);
                   reset();
-                }}>
+                }}
+                >
                   Cancel
                 </Button>
               </div>
@@ -136,16 +151,30 @@ export const LoanProductsPage = () => {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {products?.map((product) => (
           <Card key={product.id}>
             <CardHeader>
               <CardTitle>{product.name}</CardTitle>
+              <p className="text-sm text-slate-500">
+                Flexible financing product with clear repayment terms.
+              </p>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p><strong>Interest Rate:</strong> {product.interestRate}%</p>
-              <p><strong>Max Amount:</strong> ${product.maxAmount.toLocaleString()}</p>
-              <p><strong>Term:</strong> {product.termMonths} months</p>
+              <div className="grid grid-cols-3 gap-3 text-sm">
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-slate-500">Interest</p>
+                  <p className="mt-1 font-semibold text-slate-900">{product.interestRate}%</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-slate-500">Max amount</p>
+                  <p className="mt-1 font-semibold text-slate-900">${product.maxAmount.toLocaleString()}</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-slate-500">Term</p>
+                  <p className="mt-1 font-semibold text-slate-900">{product.termMonths} mo</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}

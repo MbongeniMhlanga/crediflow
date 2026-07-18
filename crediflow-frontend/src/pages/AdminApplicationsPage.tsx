@@ -41,15 +41,25 @@ export const AdminApplicationsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">All Loan Applications</h2>
+      <div className="rounded-3xl border border-white/70 bg-white/75 p-6 shadow-xl shadow-slate-200/40 backdrop-blur-xl">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
+          Admin review
+        </p>
+        <h2 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
+          All Loan Applications
+        </h2>
+        <p className="mt-2 text-sm text-slate-500">
+          Review, approve, or reject applications from the full lending queue.
+        </p>
+      </div>
       <div className="space-y-4">
         {applications?.map((app) => (
         <Card key={app.id}>
@@ -76,8 +86,8 @@ export const AdminApplicationsPage = () => {
               )}
             </div>
             {app.status === "PENDING" && (
-              <div className="flex gap-2">
-                <Button onClick={() => handleApprove(app.id)} disabled={approveMutation.isPending}>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => handleApprove(app.id)} disabled={approveMutation.isPending} className="gap-2">
                   <Check className="h-4 w-4 mr-2" />
                   Approve
                 </Button>
@@ -88,7 +98,7 @@ export const AdminApplicationsPage = () => {
               </div>
             )}
             {showRejectForm === app.id && (
-              <div className="space-y-2">
+              <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                 <Label htmlFor="rejectionReason">Rejection Reason</Label>
                 <Input
                   id="rejectionReason"
@@ -96,8 +106,8 @@ export const AdminApplicationsPage = () => {
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Enter rejection reason"
                 />
-                <div className="flex gap-2">
-                  <Button onClick={() => handleReject(app.id)} disabled={rejectMutation.isPending}>
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={() => handleReject(app.id)} disabled={rejectMutation.isPending} className="gap-2">
                     Confirm Reject
                   </Button>
                   <Button variant="secondary" onClick={() => {

@@ -58,17 +58,27 @@ export const MyApplicationsPage = () => {
 
   if (applicationsLoading || productsLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">My Loan Applications</h2>
-        <Button onClick={() => setShowForm(!showForm)}>
+      <div className="flex flex-col gap-4 rounded-3xl border border-white/70 bg-white/75 p-6 shadow-xl shadow-slate-200/40 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600">
+            Application tracker
+          </p>
+          <h2 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
+            My Loan Applications
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Submit a new application or monitor the progress of your existing requests.
+          </p>
+        </div>
+        <Button onClick={() => setShowForm(!showForm)} className="w-fit gap-2">
           <Plus className="h-4 w-4 mr-2" />
           New Application
         </Button>
@@ -78,6 +88,9 @@ export const MyApplicationsPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Apply for a Loan</CardTitle>
+            <p className="text-sm text-slate-500">
+              Choose a product and enter the amount and term you want to request.
+            </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -126,19 +139,23 @@ export const MyApplicationsPage = () => {
                   )}
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-3">
                 <Button
                   type="submit"
                   disabled={createApplication.isPending}
+                  className="gap-2"
                 >
-                  {createApplication.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {createApplication.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
                   Submit Application
                 </Button>
                 <Button
-                  type="button" variant="secondary" onClick={() => {
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
                     setShowForm(false);
                     reset();
-                  }}>
+                  }}
+                >
                   Cancel
                 </Button>
               </div>
@@ -152,18 +169,36 @@ export const MyApplicationsPage = () => {
           <Card key={app.id}>
             <CardHeader>
               <div className="flex justify-between items-start">
-                <CardTitle>{app.productName}</CardTitle>
+                <div>
+                  <CardTitle>{app.productName}</CardTitle>
+                  <p className="text-sm text-slate-500">
+                    Submitted on {new Date(app.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(app.status)}`}>
                   {app.status}
                 </span>
               </div>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p><strong>Amount:</strong> ${app.amountRequested.toLocaleString()}</p>
-              <p><strong>Term:</strong> {app.termMonths} months</p>
-              <p><strong>Applied:</strong> {new Date(app.createdAt).toLocaleDateString()}</p>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-slate-500 text-sm">Amount requested</p>
+                  <p className="mt-1 font-semibold text-slate-900">${app.amountRequested.toLocaleString()}</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-slate-500 text-sm">Term</p>
+                  <p className="mt-1 font-semibold text-slate-900">{app.termMonths} months</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 p-3">
+                  <p className="text-slate-500 text-sm">Status</p>
+                  <p className="mt-1 font-semibold text-slate-900">{app.status}</p>
+                </div>
+              </div>
               {app.status === "REJECTED" && app.rejectionMessage && (
-                <p className="text-red-600"><strong>Rejection Reason:</strong> {app.rejectionMessage}</p>
+                <p className="rounded-2xl border border-red-100 bg-red-50 p-3 text-red-700">
+                  <strong>Rejection Reason:</strong> {app.rejectionMessage}
+                </p>
               )}
             </CardContent>
           </Card>
