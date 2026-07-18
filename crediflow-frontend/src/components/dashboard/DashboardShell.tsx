@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "../ui/button";
+import { isAdminUser } from "../../lib/roles";
+import { ThemeToggle } from "../theme/ThemeToggle";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -19,20 +21,21 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 
 export const DashboardShell = () => {
   const { user, logout } = useAuth();
+  const isAdmin = isAdminUser(user);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_35%),linear-gradient(180deg,_#f8fafc_0%,_#eef2ff_100%)] text-slate-900">
-      <header className="sticky top-0 z-30 border-b border-white/70 bg-white/80 backdrop-blur-xl">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.12),_transparent_35%),linear-gradient(180deg,var(--bg)_0%,var(--bg)_100%)] text-[var(--text)]">
+      <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--bg-elevated)] backdrop-blur-xl">
         <div className="flex w-full items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
           <Link to="/dashboard" className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-lg shadow-slate-900/20">
               <ShieldCheck className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-sm font-semibold tracking-[0.18em] text-blue-600 uppercase">
+              <p className="text-sm font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">
                 CrediFlow
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[var(--muted)]">
                 Lending workspace
               </p>
             </div>
@@ -40,11 +43,14 @@ export const DashboardShell = () => {
 
           <div className="flex items-center gap-3">
             <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-slate-900">
+              <p className="text-sm font-medium text-[var(--text-h)]">
                 Hello, {user?.name} {user?.surname}
               </p>
-              <p className="text-xs text-slate-500">Manage your applications</p>
+              <p className="text-xs text-[var(--muted)]">
+                {isAdmin ? "Admin console" : "Manage your applications"}
+              </p>
             </div>
+            <ThemeToggle />
             <Button variant="secondary" onClick={logout} className="gap-2">
               <LogOut className="h-4 w-4" />
               Logout
@@ -54,7 +60,7 @@ export const DashboardShell = () => {
       </header>
 
       <div className="grid w-full gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:px-10 lg:py-8">
-        <aside className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-xl shadow-slate-200/40 backdrop-blur-xl">
+        <aside className="rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow)] backdrop-blur-xl">
           <nav className="space-y-2">
             <NavLink to="/dashboard" end className={navLinkClass}>
               <LayoutDashboard className="h-4 w-4" />
@@ -64,14 +70,15 @@ export const DashboardShell = () => {
               <CreditCard className="h-4 w-4" />
               Loan Products
             </NavLink>
-            <NavLink to="/dashboard/applications" className={navLinkClass}>
-              <FileText className="h-4 w-4" />
-              My Applications
-            </NavLink>
-            {user?.roles.some((r) => r.name === "ADMIN") && (
+            {isAdmin ? (
               <NavLink to="/dashboard/admin/applications" className={navLinkClass}>
                 <FileText className="h-4 w-4" />
                 Admin Review
+              </NavLink>
+            ) : (
+              <NavLink to="/dashboard/applications" className={navLinkClass}>
+                <FileText className="h-4 w-4" />
+                My Applications
               </NavLink>
             )}
           </nav>

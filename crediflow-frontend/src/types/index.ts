@@ -8,7 +8,7 @@ export interface UserDTO {
 
 export interface RoleDTO {
   id: number;
-  name: string;
+  roleName: string;
 }
 
 export interface LoginRequest {

@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { isAdminUser } from "../lib/roles";
 
 const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -42,7 +43,7 @@ export const LoanProductsPage = () => {
     });
   };
 
-  const isAdmin = user?.roles.some((r) => r.name === "ADMIN");
+  const isAdmin = isAdminUser(user);
 
   if (isLoading) {
     return (

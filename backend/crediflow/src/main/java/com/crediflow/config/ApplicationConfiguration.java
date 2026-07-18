@@ -8,12 +8,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -33,7 +35,9 @@ public class ApplicationConfiguration {
             return new org.springframework.security.core.userdetails.User(
                     user.getEmail(),
                     user.getPasswordHash(),
-                    Collections.emptyList()
+                    user.getRoles().stream()
+                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
+                            .collect(Collectors.toList())
             );
         };
     }

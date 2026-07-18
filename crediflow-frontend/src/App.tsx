@@ -4,9 +4,11 @@ import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { DashboardLandingPage } from "./pages/DashboardLandingPage";
 import { LoanProductsPage } from "./pages/LoanProductsPage";
 import { MyApplicationsPage } from "./pages/MyApplicationsPage";
 import { AdminApplicationsPage } from "./pages/AdminApplicationsPage";
+import { isAdminUser } from "./lib/roles";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -17,7 +19,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const isAdmin = isAdminUser(user);
 
   return (
     <Routes>
@@ -38,7 +41,16 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="products" replace />} />
+        <Route index element={<DashboardLandingPage />} />
+        <Route
+          path="admin"
+          element={
+            <Navigate
+              to={isAdmin ? "/dashboard/admin/applications" : "/dashboard/products"}
+              replace
+            />
+          }
+        />
         <Route path="products" element={<LoanProductsPage />} />
         <Route path="applications" element={<MyApplicationsPage />} />
         <Route path="admin/applications" element={<AdminApplicationsPage />} />
