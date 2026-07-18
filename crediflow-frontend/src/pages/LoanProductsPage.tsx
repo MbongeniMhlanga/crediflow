@@ -50,7 +50,7 @@ export const LoanProductsPage = () => {
       <div className="flex min-h-[40vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
-      );
+    );
   }
 
   return (
@@ -153,32 +153,52 @@ export const LoanProductsPage = () => {
       )}
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {products?.map((product) => (
-          <Card key={product.id}>
+        {products?.length ? (
+          products.map((product) => (
+            <Card key={product.id}>
+              <CardHeader>
+                <CardTitle>{product.name}</CardTitle>
+                <p className="text-sm text-slate-500">
+                  Flexible financing product with clear repayment terms.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="grid grid-cols-3 gap-3 text-sm">
+                  <div className="rounded-2xl bg-slate-50 p-3">
+                    <p className="text-slate-500">Interest</p>
+                    <p className="mt-1 font-semibold text-slate-900">{product.interestRate}%</p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-3">
+                    <p className="text-slate-500">Max amount</p>
+                    <p className="mt-1 font-semibold text-slate-900">
+                      R {product.maxAmount.toLocaleString("en-ZA")}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-50 p-3">
+                    <p className="text-slate-500">Term</p>
+                    <p className="mt-1 font-semibold text-slate-900">{product.termMonths} mo</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Card className="md:col-span-2 xl:col-span-3">
             <CardHeader>
-              <CardTitle>{product.name}</CardTitle>
+              <CardTitle>No loan products yet</CardTitle>
               <p className="text-sm text-slate-500">
-                Flexible financing product with clear repayment terms.
+                The product catalog is empty right now. Once an admin creates lending options,
+                they will appear here for everyone to review.
               </p>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="grid grid-cols-3 gap-3 text-sm">
-                <div className="rounded-2xl bg-slate-50 p-3">
-                  <p className="text-slate-500">Interest</p>
-                  <p className="mt-1 font-semibold text-slate-900">{product.interestRate}%</p>
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-3">
-                  <p className="text-slate-500">Max amount</p>
-                  <p className="mt-1 font-semibold text-slate-900">${product.maxAmount.toLocaleString()}</p>
-                </div>
-                <div className="rounded-2xl bg-slate-50 p-3">
-                  <p className="text-slate-500">Term</p>
-                  <p className="mt-1 font-semibold text-slate-900">{product.termMonths} mo</p>
-                </div>
+            <CardContent>
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
+                No products have been published yet. There is nothing to apply for until at least
+                one loan product is added.
               </div>
             </CardContent>
           </Card>
-        ))}
+        )}
       </div>
     </div>
   );
