@@ -83,10 +83,10 @@ export const CreditScorePage = () => {
                   <div className="flex items-center gap-2">
                     {factor.impact === "positive" ? (
                       <TrendingUp className="h-4 w-4 text-emerald-600" />
-                    ) : factor.impact === "negative" ? (
-                      <AlertTriangle className="h-4 w-4 text-rose-600" />
-                    ) : (
+                    ) : factor.impact === "neutral" ? (
                       <MinusCircle className="h-4 w-4 text-amber-600" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4 text-rose-600" />
                     )}
                     <p className="text-sm font-medium text-[var(--text-h)]">{factor.label}</p>
                   </div>

@@ -5,6 +5,9 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { DashboardLandingPage } from "./pages/DashboardLandingPage";
+import { CreditScorePage } from "./pages/CreditScorePage";
+import { RepaymentSchedulePage } from "./pages/RepaymentSchedulePage";
+import { PaymentsPage } from "./pages/PaymentsPage";
 import { LoanProductsPage } from "./pages/LoanProductsPage";
 import { MyApplicationsPage } from "./pages/MyApplicationsPage";
 import { AdminApplicationsPage } from "./pages/AdminApplicationsPage";
@@ -53,6 +56,9 @@ function App() {
         />
         <Route path="products" element={<LoanProductsPage />} />
         <Route path="applications" element={<MyApplicationsPage />} />
+        <Route path="credit-score" element={<CreditScorePage />} />
+        <Route path="repayment-schedule" element={<RepaymentSchedulePage />} />
+        <Route path="payments" element={<PaymentsPage />} />
         <Route path="admin/applications" element={<AdminApplicationsPage />} />
       </Route>
     </Routes>

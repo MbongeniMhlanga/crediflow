@@ -3,6 +3,9 @@ import {
   LayoutDashboard,
   CreditCard,
   FileText,
+  BadgeDollarSign,
+  ChartColumnStacked,
+  Landmark,
   LogOut,
   ShieldCheck,
 } from "lucide-react";
@@ -70,17 +73,22 @@ export const DashboardShell = () => {
               <CreditCard className="h-4 w-4" />
               Loan Products
             </NavLink>
-            {isAdmin ? (
-              <NavLink to="/dashboard/admin/applications" className={navLinkClass}>
-                <FileText className="h-4 w-4" />
-                Admin Review
-              </NavLink>
-            ) : (
-              <NavLink to="/dashboard/applications" className={navLinkClass}>
-                <FileText className="h-4 w-4" />
-                My Applications
-              </NavLink>
-            )}
+            <NavLink to="/dashboard/credit-score" className={navLinkClass}>
+              <ChartColumnStacked className="h-4 w-4" />
+              Credit Score
+            </NavLink>
+            <NavLink to="/dashboard/repayment-schedule" className={navLinkClass}>
+              <Landmark className="h-4 w-4" />
+              Repayment Schedule
+            </NavLink>
+            <NavLink to="/dashboard/payments" className={navLinkClass}>
+              <BadgeDollarSign className="h-4 w-4" />
+              Payments
+            </NavLink>
+            <NavLink to={isAdmin ? "/dashboard/admin/applications" : "/dashboard/applications"} className={navLinkClass}>
+              <FileText className="h-4 w-4" />
+              {isAdmin ? "Admin Review" : "My Applications"}
+            </NavLink>
           </nav>
         </aside>
 
